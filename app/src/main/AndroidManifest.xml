@@ -19,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+                android:name=".NewWordActivity"
+                android:label="@string/add_new_word"
+                android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
