@@ -36,8 +36,8 @@ abstract class WordRoomDatabase : RoomDatabase() {
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
-        override fun onOpen(db: SupportSQLiteDatabase) {
-            super.onOpen(db)
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch(Dispatchers.IO) {
                     populateDatabase(database.wordDao())
@@ -45,13 +45,12 @@ abstract class WordRoomDatabase : RoomDatabase() {
             }
         }
 
-        suspend fun populateDatabase(wordDao: WordDao) {
-            wordDao.deleteAll()
-
+        suspend fun populateDatabase(dao: WordDao) {
+            dao.deleteAll()
             var word = Word("Hello")
-            wordDao.insert(word)
+            dao.insert(word)
             word = Word("World!")
-            wordDao.insert(word)
+            dao.insert(word)
         }
     }
 }
