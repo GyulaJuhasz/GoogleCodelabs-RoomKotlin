@@ -3,39 +3,35 @@ package com.example.roomwordsample
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.roomwordsample.adapter.WordListAdapter
 import com.example.roomwordsample.data.Word
+import com.example.roomwordsample.databinding.WordListActivityBinding
 import com.example.roomwordsample.viewmodel.WordViewModel
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.activity_word_list.*
 
-class MainActivity : AppCompatActivity() {
-
+class WordListActivity : AppCompatActivity(), WordListPresenter {
     private lateinit var wordViewModel: WordViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = DataBindingUtil.setContentView<WordListActivityBinding>(this, R.layout.activity_word_list)
         setSupportActionBar(toolbar)
 
         val adapter = WordListAdapter(this)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
 
         wordViewModel = ViewModelProviders.of(this).get(WordViewModel::class.java)
         wordViewModel.allWords.observe(this, Observer { words ->
             words?.let { newWords -> adapter.setWords(newWords) }
         })
 
-        fab.setOnClickListener { view ->
-            val intent = Intent(this@MainActivity, NewWordActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE_NEW_WORD)
-        }
+        binding.setVariable(BR.presenter, this)
+        binding.setVariable(BR.wordListAdapter, adapter)
+        binding.executePendingBindings()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -51,8 +47,13 @@ class MainActivity : AppCompatActivity() {
                 wordViewModel.insert(Word(word))
             }
         } else {
-            Snackbar.make(fab, R.string.empty_not_saved, Snackbar.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.empty_not_saved, Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun addNewWordAction() {
+        val intent = Intent(this@WordListActivity, NewWordActivity::class.java)
+        startActivityForResult(intent, REQUEST_CODE_NEW_WORD)
     }
 
     companion object {

@@ -2,12 +2,11 @@ package com.example.roomwordsample.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomwordsample.R
+import com.example.roomwordsample.BR
 import com.example.roomwordsample.data.Word
+import com.example.roomwordsample.databinding.WordRecyclerViewBinding
 
 class WordListAdapter internal constructor(
     context: Context
@@ -16,17 +15,16 @@ class WordListAdapter internal constructor(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var words = emptyList<Word>()
 
-    inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val wordItemView: TextView = itemView.findViewById(R.id.textView)
-    }
+    inner class WordViewHolder(val binding: WordRecyclerViewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
-        val itemView = inflater.inflate(R.layout.word_recyclerview_item, parent, false)
-        return WordViewHolder(itemView)
+        val binding = WordRecyclerViewBinding.inflate(inflater, parent, false)
+        return WordViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
-        holder.wordItemView.text = words[position].word
+        holder.binding.setVariable(BR.recyclerViewItemWord, words[position])
+        holder.binding.executePendingBindings()
     }
 
     override fun getItemCount() = words.size
