@@ -28,6 +28,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        pickFirst 'META-INF/atomicfu.kotlin_module'
+    }
 }
 
 dependencies {
